@@ -2,42 +2,22 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+# Базовые классы (на случай использования в других местах)
+INPUT_CLASSES = "w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+
+class UserLoginForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)
 
 class UserRegistrationForm(UserCreationForm):
-    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Email address'
-    }))
-    first_name = forms.CharField(max_length=30, required=True, widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'First name'
-    }))
-    last_name = forms.CharField(max_length=30, required=True, widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Last name'
-    }))
+    email = forms.EmailField(required=True)
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
     
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
-        widgets = {
-            'username': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Username'
-            }),
-        }
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['password1'].widget.attrs.update({
-            'class': 'form-control',
-            'placeholder': 'Password'
-        })
-        self.fields['password2'].widget.attrs.update({
-            'class': 'form-control',
-            'placeholder': 'Confirm password'
-        })
-    
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
@@ -47,43 +27,14 @@ class UserRegistrationForm(UserCreationForm):
             user.save()
         return user
 
-
-class UserLoginForm(forms.Form):
-    username = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Username'
-    }))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Password'
-    }))
-
-
 class StudentRegistrationForm(forms.Form):
-    """Регистрация студента: привязка аккаунта к существующей записи по студенческому билету."""
-    username = forms.CharField(max_length=150, widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Username'
-    }))
-    student_id = forms.CharField(max_length=20, widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Student ID (number from your student card)'
-    }))
-    email = forms.EmailField(required=False, widget=forms.EmailInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Email (optional)'
-    }))
-    password1 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}),
-        label='Password'
-    )
-    password2 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm password'}),
-        label='Confirm password'
-    )
+    username = forms.CharField(max_length=150)
+    student_id = forms.CharField(max_length=20)
+    email = forms.EmailField(required=False)
+    password1 = forms.CharField(widget=forms.PasswordInput, label='Password')
+    password2 = forms.CharField(widget=forms.PasswordInput, label='Confirm password')
     
     def clean_username(self):
-        from django.contrib.auth.models import User
         username = self.cleaned_data.get('username')
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError('This username is already taken.')
@@ -95,19 +46,18 @@ class StudentRegistrationForm(forms.Form):
         try:
             student = Student.objects.get(student_id=student_id)
         except Student.DoesNotExist:
-            raise forms.ValidationError('Student with this ID was not found. Contact the administrator.')
+            raise forms.ValidationError('Student ID not found.')
         if student.user_id is not None:
-            raise forms.ValidationError('An account is already linked to this Student ID.')
+            raise forms.ValidationError('Account already linked.')
         return student_id
     
     def clean(self):
         data = super().clean()
-        if data.get('password1') and data.get('password2') and data['password1'] != data['password2']:
+        if data.get('password1') != data.get('password2'):
             raise forms.ValidationError({'password2': 'Passwords do not match.'})
         return data
     
     def save(self):
-        from django.contrib.auth.models import User
         from .models import Student
         user = User.objects.create_user(
             username=self.cleaned_data['username'],
@@ -116,54 +66,20 @@ class StudentRegistrationForm(forms.Form):
         )
         student = Student.objects.get(student_id=self.cleaned_data['student_id'])
         student.user = user
-        student.email = self.cleaned_data.get('email') or student.email
         student.save()
         return user
 
-
 class TeacherRegistrationForm(UserCreationForm):
-    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Email address'
-    }))
-    first_name = forms.CharField(max_length=30, required=True, widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'First name'
-    }))
-    last_name = forms.CharField(max_length=30, required=True, widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Last name'
-    }))
-    phone = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Phone number (optional)'
-    }))
-    department = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Department (optional)'
-    }))
+    email = forms.EmailField(required=True)
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+    phone = forms.CharField(max_length=20, required=False)
+    department = forms.CharField(max_length=100, required=False)
     
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'phone', 'department', 'password1', 'password2')
-        widgets = {
-            'username': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Username'
-            }),
-        }
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['password1'].widget.attrs.update({
-            'class': 'form-control',
-            'placeholder': 'Password'
-        })
-        self.fields['password2'].widget.attrs.update({
-            'class': 'form-control',
-            'placeholder': 'Confirm password'
-        })
-    
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
@@ -172,4 +88,3 @@ class TeacherRegistrationForm(UserCreationForm):
         if commit:
             user.save()
         return user
-
