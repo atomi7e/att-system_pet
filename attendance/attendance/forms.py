@@ -2,37 +2,28 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-# Базовые классы (на случай использования в других местах)
-INPUT_CLASSES = "w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+# Универсальный класс для всех полей ввода (ссылается на style.css)
+INPUT_CLASSES = "form-input"
 
 class UserLoginForm(forms.Form):
-    username = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': INPUT_CLASSES, 'placeholder': 'Enter username'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': INPUT_CLASSES, 'placeholder': 'Enter password'}))
 
 class UserRegistrationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    first_name = forms.CharField(max_length=30, required=True)
-    last_name = forms.CharField(max_length=30, required=True)
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': INPUT_CLASSES}))
+    first_name = forms.CharField(max_length=30, required=True, widget=forms.TextInput(attrs={'class': INPUT_CLASSES}))
+    last_name = forms.CharField(max_length=30, required=True, widget=forms.TextInput(attrs={'class': INPUT_CLASSES}))
     
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        user.first_name = self.cleaned_data['first_name']
-        user.last_name = self.cleaned_data['last_name']
-        if commit:
-            user.save()
-        return user
-
 class StudentRegistrationForm(forms.Form):
-    username = forms.CharField(max_length=150)
-    student_id = forms.CharField(max_length=20)
-    email = forms.EmailField(required=False)
-    password1 = forms.CharField(widget=forms.PasswordInput, label='Password')
-    password2 = forms.CharField(widget=forms.PasswordInput, label='Confirm password')
+    username = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class': INPUT_CLASSES, 'placeholder': 'Choose username'}))
+    student_id = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': INPUT_CLASSES, 'placeholder': 'e.g. 230521'}))
+    email = forms.EmailField(required=False, widget=forms.EmailInput(attrs={'class': INPUT_CLASSES, 'placeholder': 'Optional'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': INPUT_CLASSES}), label='Password')
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': INPUT_CLASSES}), label='Confirm password')
     
     def clean_username(self):
         username = self.cleaned_data.get('username')
@@ -70,15 +61,18 @@ class StudentRegistrationForm(forms.Form):
         return user
 
 class TeacherRegistrationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    first_name = forms.CharField(max_length=30, required=True)
-    last_name = forms.CharField(max_length=30, required=True)
-    phone = forms.CharField(max_length=20, required=False)
-    department = forms.CharField(max_length=100, required=False)
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': INPUT_CLASSES}))
+    first_name = forms.CharField(max_length=30, required=True, widget=forms.TextInput(attrs={'class': INPUT_CLASSES}))
+    last_name = forms.CharField(max_length=30, required=True, widget=forms.TextInput(attrs={'class': INPUT_CLASSES}))
+    phone = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'class': INPUT_CLASSES}))
+    department = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={'class': INPUT_CLASSES}))
     
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'phone', 'department', 'password1', 'password2')
+        widgets = {
+            'username': forms.TextInput(attrs={'class': INPUT_CLASSES}),
+        }
 
     def save(self, commit=True):
         user = super().save(commit=False)

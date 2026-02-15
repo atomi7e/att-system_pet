@@ -3,65 +3,56 @@
 {% block title %}Student Registration{% endblock %}
 
 {% block content %}
-<div class="sm:mx-auto sm:w-full sm:max-w-md">
-    <div class="bg-white py-8 px-6 shadow-xl shadow-slate-200/60 sm:rounded-2xl sm:px-10 border border-gray-100">
-        <div class="mb-6">
-            <h2 class="text-2xl font-bold text-slate-900">Student Sign Up</h2>
-            <p class="mt-1 text-sm text-slate-500">Link your Student ID to create an account</p>
+<div class="card auth-card">
+    <div class="auth-header">
+        <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Student Sign Up</h2>
+        <p style="color: var(--text-muted);">Link your Student ID to create an account</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label class="form-label">Username</label>
+            {{ form.username }}
+            {% if form.username.errors %}<p style="color: var(--status-absent-text); font-size: 12px; margin-top: 4px;">{{ form.username.errors.0 }}</p>{% endif %}
         </div>
 
-        <form method="POST" class="space-y-5">
-            {% csrf_token %}
-
-            {% if form.non_field_errors %}
-                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">
-                    {{ form.non_field_errors }}
-                </div>
-            {% endif %}
-
-            <div>
-                <label class="block text-sm font-bold text-slate-700 mb-1">Username</label>
-                <input type="text" name="username" required 
-                       class="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all outline-none" placeholder="Choose a username">
-                {% if form.username.errors %}<p class="mt-1 text-xs text-red-600">{{ form.username.errors.0 }}</p>{% endif %}
-            </div>
-
-            <div>
-                <label class="block text-sm font-bold text-slate-700 mb-1">Student ID</label>
-                <input type="text" name="student_id" required 
-                       class="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all outline-none" placeholder="e.g. 230521">
-                <p class="mt-1 text-xs text-slate-500">Must match your ID on the student card.</p>
-                {% if form.student_id.errors %}<p class="mt-1 text-xs text-red-600">{{ form.student_id.errors.0 }}</p>{% endif %}
-            </div>
-
-            <div>
-                <label class="block text-sm font-bold text-slate-700 mb-1">Email <span class="font-normal text-gray-400">(Optional)</span></label>
-                <input type="email" name="email" 
-                       class="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all outline-none" placeholder="name@example.com">
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1">Password</label>
-                    <input type="password" name="password1" required 
-                           class="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1">Confirm</label>
-                    <input type="password" name="password2" required 
-                           class="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all outline-none">
-                </div>
-            </div>
-            {% if form.password1.errors %}<p class="text-xs text-red-600">{{ form.password1.errors.0 }}</p>{% endif %}
-
-            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-blue-600/20 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform active:scale-95">
-                Create Account
-            </button>
-        </form>
-
-        <div class="mt-6 text-center text-sm">
-            <a href="{% url 'register_choice' %}" class="text-slate-500 hover:text-slate-800">← Back</a>
+        <div class="form-group">
+            <label class="form-label">Student ID</label>
+            {{ form.student_id }}
+            <p style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">Must match your ID on the student card.</p>
+            {% if form.student_id.errors %}<p style="color: var(--status-absent-text); font-size: 12px; margin-top: 4px;">{{ form.student_id.errors.0 }}</p>{% endif %}
         </div>
+
+        <div class="form-group">
+            <label class="form-label">Email <span style="font-weight: 400; color: var(--text-muted);">(Optional)</span></label>
+            {{ form.email }}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                {{ form.password1 }}
+            </div>
+            <div class="form-group">
+                <label class="form-label">Confirm</label>
+                {{ form.password2 }}
+            </div>
+        </div>
+        {% if form.password1.errors %}<p style="color: var(--status-absent-text); font-size: 12px; margin-bottom: 10px;">{{ form.password1.errors.0 }}</p>{% endif %}
+
+        <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 24px;">
+        <a href="{% url 'register_choice' %}" style="color: var(--text-muted);">← Back</a>
     </div>
 </div>
 {% endblock %}
