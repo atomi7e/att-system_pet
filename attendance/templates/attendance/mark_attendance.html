@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Mark Attendance - {{ class_obj.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Mark Attendance</h2>
+    <p>{{ class_obj.name }}{% if selected_group %} — {{ selected_group.code }}{% endif %} — {{ attendance_date|date:"F d, Y" }}</p>
+    <div class="header-actions">
+        {% if is_teacher %}
+        <a href="{% url 'mark_attendance' class_obj.id %}" class="btn btn-secondary">← Change group</a>
+        {% else %}
+        <a href="{% url 'class_students' class_obj.id %}" class="btn btn-secondary">← Back</a>
+        {% endif %}
+    </div>
+</div>
+
+{% if students %}
+    <form method="POST" class="attendance-form">
+        {% csrf_token %}
+        <div class="date-selector">
+            <label for="date">Select Date:</label>
+            <input type="date" id="date" name="date" value="{{ attendance_date|date:'Y-m-d' }}" 
+                   onchange="window.location.href='?{% if group_id %}group_id={{ group_id }}&{% endif %}date=' + this.value">
+        </div>
+
+        <div class="attendance-list">
+            <h3>Students{% if selected_group %} — {{ selected_group.code }}{% endif %} ({{ students.count }})</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <td>{{ student.student_id }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>
+                                <select name="status_{{ student.id }}" class="status-select">
+                                    {% if student.current_status == 'present' %}
+                                        <option value="present" selected>Present</option>
+                                        <option value="absent">Absent</option>
+                                        <option value="late">Late</option>
+                                    {% elif student.current_status == 'late' %}
+                                        <option value="present">Present</option>
+                                        <option value="absent">Absent</option>
+                                        <option value="late" selected>Late</option>
+                                    {% else %}
+                                        <option value="present">Present</option>
+                                        <option value="absent" selected>Absent</option>
+                                        <option value="late">Late</option>
+                                    {% endif %}
+                                </select>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">Save Attendance</button>
+        </div>
+    </form>
+{% else %}
+    <div class="empty-state">
+        <p>No students found in this class.</p>
+    </div>
+{% endif %}
+{% endblock %}
+

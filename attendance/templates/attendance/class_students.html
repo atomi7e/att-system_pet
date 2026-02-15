@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ class_obj.name }} - Students{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>{{ class_obj.name }}</h2>
+    <p class="class-code">{{ class_obj.code }}</p>
+    <div class="header-actions">
+        <a href="{% url 'home' %}" class="btn btn-secondary">← Back to Classes</a>
+        <a href="{% url 'mark_attendance' class_obj.id %}" class="btn btn-success">Mark Attendance</a>
+        <a href="{% url 'attendance_report' class_obj.id %}" class="btn btn-info">View Report</a>
+    </div>
+</div>
+
+{% if students %}
+    <div class="students-list">
+        <h3>Students ({{ students.count }})</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Group</th>
+                    <th>Email</th>
+                    <th>Enrolled Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td>{{ student.student_id }}</td>
+                        <td><a href="{% url 'student_detail' student.id %}">{{ student.name }}</a></td>
+                        <td>{{ student.group.code }}</td>
+                        <td>{{ student.email|default:"—" }}</td>
+                        <td>{{ student.created_at|date:"M d, Y" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="empty-state">
+        {% if is_teacher %}
+        <p>No students in your groups for this subject.</p>
+        {% else %}
+        <p>No students found in this class. Add students through the <a href="/admin/">Admin Panel</a>.</p>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}
+

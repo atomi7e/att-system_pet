@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Attendance System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Classes</h2>
+    <p>Select a class to manage attendance</p>
+</div>
+
+{% if classes %}
+    <div class="classes-grid">
+        {% for class in classes %}
+            <div class="class-card">
+                <h3>{{ class.name }}</h3>
+                <p class="class-code">{{ class.code }}</p>
+                {% if class.description %}
+                    <p class="class-description">{{ class.description }}</p>
+                {% endif %}
+                <p class="student-count">Students: {{ class.students.count }}</p>
+                <div class="class-actions">
+                    <a href="{% url 'class_students' class.id %}" class="btn btn-primary">View Students</a>
+                    <a href="{% url 'mark_attendance' class.id %}" class="btn btn-success">Mark Attendance</a>
+                    <a href="{% url 'attendance_report' class.id %}" class="btn btn-info">View Report</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        {% if is_teacher %}
+        <p>No subjects assigned to you. Please contact the administrator to get access to subjects and groups.</p>
+        {% else %}
+        <p>No classes found. Please add classes through the <a href="/admin/">Admin Panel</a>.</p>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}
+

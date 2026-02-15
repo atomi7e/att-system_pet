@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Mark Attendance - {{ class_obj.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Mark Attendance</h2>
+    <p>{{ class_obj.name }} — select a group</p>
+    <div class="header-actions">
+        <a href="{% url 'class_students' class_obj.id %}" class="btn btn-secondary">← Back</a>
+    </div>
+</div>
+
+{% if groups %}
+    <div class="groups-select">
+        <h3>Select group</h3>
+        <p class="text-muted">You can mark attendance only for groups assigned to you.</p>
+        <ul class="group-list">
+            {% for group in groups %}
+                <li>
+                    <a href="{% url 'mark_attendance' class_obj.id %}?group_id={{ group.id }}" class="btn btn-primary">
+                        {{ group.code }}{% if group.name %} — {{ group.name }}{% endif %}
+                        <span class="badge">{{ group.students.count }} students</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>No groups assigned to you for this subject. Please contact the administrator.</p>
+        <a href="{% url 'home' %}" class="btn btn-secondary">← Back to Classes</a>
+    </div>
+{% endif %}
+{% endblock %}

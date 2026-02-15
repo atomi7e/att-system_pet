@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Register as Teacher - Attendance System{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Teacher Registration</h2>
+        <p class="auth-subtitle">Register as a teacher. Your registration will be reviewed by an administrator.</p>
+        
+        <form method="POST" class="auth-form">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="field-errors">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div class="field-errors">{{ form.first_name.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div class="field-errors">{{ form.last_name.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="field-errors">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.phone.id_for_label }}">Phone Number</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}
+                    <div class="field-errors">{{ form.phone.errors }}</div>
+                {% endif %}
+                <small class="form-help">Optional</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.department.id_for_label }}">Department</label>
+                {{ form.department }}
+                {% if form.department.errors %}
+                    <div class="field-errors">{{ form.department.errors }}</div>
+                {% endif %}
+                <small class="form-help">Optional</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}">Password</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="field-errors">{{ form.password1.errors }}</div>
+                {% endif %}
+                <small class="form-help">Your password must contain at least 8 characters.</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="field-errors">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="alert alert-info" style="margin-bottom: 20px;">
+                <strong>Note:</strong> After registration, your account will be pending approval. 
+                You will be able to log in once an administrator approves your registration.
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Submit Registration</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p><a href="{% url 'register_choice' %}">← Back to registration options</a></p>
+            <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

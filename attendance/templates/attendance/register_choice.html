@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Attendance System{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Create an account</h2>
+        <p class="auth-subtitle">Choose how you want to register</p>
+        
+        <div class="register-choice-cards">
+            <a href="{% url 'register_student' %}" class="register-choice-card">
+                <span class="register-choice-icon">👤</span>
+                <h3>I am a Student</h3>
+                <p>Register with your Student ID to view your attendance and grades.</p>
+            </a>
+            <a href="{% url 'register_teacher' %}" class="register-choice-card">
+                <span class="register-choice-icon">👨‍🏫</span>
+                <h3>I am a Teacher</h3>
+                <p>Register to mark attendance for your subjects and groups (requires admin approval).</p>
+            </a>
+        </div>
+        
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

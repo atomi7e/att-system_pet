@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Register as Student - Attendance System{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Register as Student</h2>
+        <p class="auth-subtitle">Link your account to your student record using your Student ID</p>
+        
+        <form method="post" action="{% url 'register_student' %}" class="auth-form">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            
+            <div class="form-group">
+                <label for="id_username">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="field-errors">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_student_id">Student ID</label>
+                {{ form.student_id }}
+                {% if form.student_id.errors %}
+                    <div class="field-errors">{{ form.student_id.errors }}</div>
+                {% endif %}
+                <small class="form-hint">Enter the ID from your student card (e.g. S001). Your record must already exist in the system.</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_email">Email (optional)</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="field-errors">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password1">Password</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="field-errors">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password2">Confirm password</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="field-errors">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p><a href="{% url 'register_choice' %}">← Back to registration options</a></p>
+            <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
