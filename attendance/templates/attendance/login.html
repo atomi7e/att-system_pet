@@ -3,48 +3,38 @@
 {% block title %}Sign In{% endblock %}
 
 {% block content %}
-<div class="sm:mx-auto sm:w-full sm:max-w-md">
-    <div class="bg-white py-8 px-4 shadow-xl shadow-slate-200/60 sm:rounded-2xl sm:px-10 border border-gray-100">
-        <div class="mb-6 text-center">
-            <h2 class="text-3xl font-bold text-slate-900">Welcome Back</h2>
-            <p class="mt-2 text-sm text-slate-500">Sign in to access your account</p>
+<div class="card auth-card">
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h2 style="font-size: 24px; font-weight: bold; color: #1e293b;">Welcome Back</h2>
+        <p style="color: #64748b; margin-top: 8px;">Enter your credentials to access admin panel</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="badge badge-danger" style="display: block; margin-bottom: 20px; padding: 10px;">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="id_username" class="form-label">Username</label>
+            <input type="text" name="username" id="id_username" required
+                   class="form-control" placeholder="Enter username">
         </div>
 
-        <form class="space-y-6" method="POST">
-            {% csrf_token %}
-
-            {% if form.non_field_errors %}
-                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">
-                    {{ form.non_field_errors }}
-                </div>
-            {% endif %}
-
-            <div>
-                <label for="id_username" class="block text-sm font-bold text-slate-700 mb-1">Username</label>
-                <div class="relative">
-                    <input type="text" name="username" id="id_username" required
-                        class="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
-                        placeholder="Enter username">
-                </div>
-            </div>
-
-            <div>
-                <label for="id_password" class="block text-sm font-bold text-slate-700 mb-1">Password</label>
-                <div class="relative">
-                    <input type="password" name="password" id="id_password" required
-                        class="block w-full px-4 py-3 border border-gray-300 rounded-xl bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
-                        placeholder="Enter password">
-                </div>
-            </div>
-
-            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-blue-600/20 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform active:scale-95">
-                Sign in
-            </button>
-        </form>
-        
-        <div class="mt-6 text-center">
-             <p class="text-sm text-slate-500">No account? <a href="{% url 'register_choice' %}" class="text-blue-600 font-medium hover:underline">Register</a></p>
+        <div class="form-group">
+            <label for="id_password" class="form-label">Password</label>
+            <input type="password" name="password" id="id_password" required
+                   class="form-control" placeholder="Enter password">
         </div>
+
+        <button type="submit" class="btn btn-primary btn-full">Sign in</button>
+    </form>
+    
+    <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+         <p>No account? <a href="{% url 'register_choice' %}" style="color: var(--primary-color); font-weight: 600;">Register</a></p>
     </div>
 </div>
 {% endblock %}

@@ -1,109 +1,73 @@
 {% extends 'base.html' %}
-
-{% block title %}{{ student.name }} - Student Details{% endblock %}
+{% block title %}Profile{% endblock %}
+{% block header_title %}Student Profile{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>{{ student.name }}</h2>
-    <p class="student-id">Student ID: {{ student.student_id }}</p>
-    <div class="header-actions">
-        {% if is_own %}
-        <a href="{% url 'my_attendance' %}" class="btn btn-secondary">← My attendance</a>
-        {% elif first_class %}
-        <a href="{% url 'class_students' first_class.id %}" class="btn btn-secondary">← Back to Class</a>
-        {% endif %}
-    </div>
-</div>
-
-<div class="student-info">
-    <div class="info-card">
-        <h3>Student Information</h3>
-        <table class="info-table">
-            <tr>
-                <th>Student ID:</th>
-                <td>{{ student.student_id }}</td>
-            </tr>
-            <tr>
-                <th>Name:</th>
-                <td>{{ student.name }}</td>
-            </tr>
-            <tr>
-                <th>Email:</th>
-                <td>{{ student.email|default:"—" }}</td>
-            </tr>
-            <tr>
-                <th>Group:</th>
-                <td>{{ student.group.code }}</td>
-            </tr>
-            <tr>
-                <th>Classes:</th>
-                <td>
-                    {% for c in student.group.classes.all %}
-                        <a href="{% url 'class_students' c.id %}">{{ c.name }}</a>{% if not forloop.last %}, {% endif %}
-                    {% empty %}
-                        —
-                    {% endfor %}
-                </td>
-            </tr>
-            <tr>
-                <th>Enrolled:</th>
-                <td>{{ student.created_at|date:"F d, Y" }}</td>
-            </tr>
-        </table>
-    </div>
-</div>
-
-<div class="attendance-history">
-    <h3>Attendance History</h3>
-    {% if attendances %}
-        <div class="stats-summary">
-            <div class="stat-mini">
-                <span class="stat-label">Total Records:</span>
-                <span class="stat-value">{{ attendances.count }}</span>
-            </div>
-            <div class="stat-mini stat-present">
-                <span class="stat-label">Present:</span>
-                <span class="stat-value">{{ present_count }}</span>
-            </div>
-            <div class="stat-mini stat-absent">
-                <span class="stat-label">Absent:</span>
-                <span class="stat-value">{{ absent_count }}</span>
-            </div>
-            <div class="stat-mini stat-late">
-                <span class="stat-label">Late:</span>
-                <span class="stat-value">{{ late_count }}</span>
-            </div>
+<div class="card">
+    <div class="profile-header">
+        <div class="avatar-large">
+            {{ student.name|slice:":1" }}
         </div>
-        
-        <table class="data-table">
+        <div>
+            <h1 style="font-size: 24px; font-weight: 700;">{{ student.name }}</h1>
+            <p style="color: var(--secondary-color);">ID: {{ student.student_id }} | Group: {{ student.group.code }}</p>
+        </div>
+        <div style="margin-left: auto;">
+             {% if is_own %}
+                <a href="{% url 'my_attendance' %}" class="btn btn-secondary">Dashboard</a>
+            {% elif first_class %}
+                <a href="{% url 'class_students' first_class.id %}" class="btn btn-secondary">Back to Class</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div style="color: #64748B; font-size: 14px;">Present</div>
+            <div class="stat-value text-green">{{ present_count }}</div>
+        </div>
+        <div class="stat-box">
+            <div style="color: #64748B; font-size: 14px;">Absent</div>
+            <div class="stat-value text-red">{{ absent_count }}</div>
+        </div>
+        <div class="stat-box">
+            <div style="color: #64748B; font-size: 14px;">Late</div>
+            <div class="stat-value text-yellow">{{ late_count }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-bottom: 20px; font-size: 18px; font-weight: 600;">Attendance History</h3>
+    <div class="table-container">
+        <table class="table">
             <thead>
                 <tr>
                     <th>Date</th>
+                    <th>Subject</th>
                     <th>Status</th>
-                    <th>Class</th>
                     <th>Notes</th>
                 </tr>
             </thead>
             <tbody>
                 {% for attendance in attendances %}
-                    <tr class="status-{{ attendance.status }}">
-                        <td>{{ attendance.date|date:"M d, Y" }}</td>
-                        <td>
-                            <span class="status-badge status-{{ attendance.status }}">
-                                {{ attendance.get_status_display }}
-                            </span>
-                        </td>
-                        <td>{{ attendance.class_enrolled.name }}</td>
-                        <td>{{ attendance.notes|default:"—" }}</td>
-                    </tr>
+                <tr>
+                    <td>{{ attendance.date|date:"M d, Y" }}</td>
+                    <td>{{ attendance.class_enrolled.name }}</td>
+                    <td>
+                        {% if attendance.status == 'present' %}
+                            <span class="badge badge-success">Present</span>
+                        {% elif attendance.status == 'late' %}
+                            <span class="badge badge-warning">Late</span>
+                        {% else %}
+                            <span class="badge badge-danger">Absent</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ attendance.notes|default:"—" }}</td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
-    {% else %}
-        <div class="empty-state">
-            <p>No attendance records found for this student.</p>
-        </div>
-    {% endif %}
+    </div>
 </div>
 {% endblock %}
-
