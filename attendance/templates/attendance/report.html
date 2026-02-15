@@ -1,74 +1,75 @@
 {% extends 'base.html' %}
-
-{% block title %}Attendance Report - {{ class_obj.name }}{% endblock %}
+{% block title %}Report - {{ class_obj.name }}{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>Attendance Report</h2>
-    <p>{{ class_obj.name }} - {{ report_date|date:"F d, Y" }}</p>
-    <div class="header-actions">
-        <a href="{% url 'class_students' class_obj.id %}" class="btn btn-secondary">← Back</a>
-        <a href="{% url 'mark_attendance' class_obj.id %}?date={{ report_date|date:'Y-m-d' }}" class="btn btn-success">Mark Attendance</a>
+<div class="header-actions">
+    <div class="header-title">
+        <h2>Attendance Report</h2>
+        <p>{{ class_obj.name }} — {{ report_date|date:"F d, Y" }}</p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <a href="{% url 'class_students' class_obj.id %}" class="btn btn-secondary">Back</a>
     </div>
 </div>
 
-<div class="date-selector">
-    <label for="date">Select Date:</label>
-    <input type="date" id="date" name="date" value="{{ report_date|date:'Y-m-d' }}" 
+<div class="card" style="display: flex; align-items: center; gap: 16px;">
+    <label for="date" style="font-weight: 600;">Select Date:</label>
+    <input type="date" id="date" value="{{ report_date|date:'Y-m-d' }}" 
+           class="form-input" style="width: auto;"
            onchange="window.location.href='{% url 'attendance_report' class_obj.id %}' + '?date=' + this.value">
 </div>
 
 <div class="stats-grid">
-    <div class="stat-card stat-total">
-        <h3>Total Students</h3>
-        <p class="stat-number">{{ total_students }}</p>
+    <div class="stat-box">
+        <div style="color: var(--text-muted);">Present</div>
+        <div class="stat-num" style="color: var(--status-present-text);">{{ present_count }}</div>
     </div>
-    <div class="stat-card stat-present">
-        <h3>Present</h3>
-        <p class="stat-number">{{ present_count }}</p>
+    <div class="stat-box">
+        <div style="color: var(--text-muted);">Absent</div>
+        <div class="stat-num" style="color: var(--status-absent-text);">{{ absent_count }}</div>
     </div>
-    <div class="stat-card stat-absent">
-        <h3>Absent</h3>
-        <p class="stat-number">{{ absent_count }}</p>
-    </div>
-    <div class="stat-card stat-late">
-        <h3>Late</h3>
-        <p class="stat-number">{{ late_count }}</p>
+    <div class="stat-box">
+        <div style="color: var(--text-muted);">Late</div>
+        <div class="stat-num" style="color: var(--status-late-text);">{{ late_count }}</div>
     </div>
 </div>
 
-{% if attendances %}
-    <div class="attendance-report">
-        <h3>Attendance Details</h3>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Student ID</th>
-                    <th>Name</th>
-                    <th>Status</th>
-                    <th>Marked At</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for attendance in attendances %}
-                    <tr class="status-{{ attendance.status }}">
-                        <td>{{ attendance.student.student_id }}</td>
-                        <td>{{ attendance.student.name }}</td>
-                        <td>
-                            <span class="status-badge status-{{ attendance.status }}">
-                                {{ attendance.get_status_display }}
-                            </span>
-                        </td>
-                        <td>{{ attendance.marked_at|date:"H:i" }}</td>
+<div class="card">
+    {% if attendances %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student Name</th>
+                        <th>Status</th>
+                        <th>Time</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-{% else %}
-    <div class="empty-state">
-        <p>No attendance records found for this date. <a href="{% url 'mark_attendance' class_obj.id %}?date={{ report_date|date:'Y-m-d' }}">Mark attendance now</a>.</p>
-    </div>
-{% endif %}
+                </thead>
+                <tbody>
+                    {% for attendance in attendances %}
+                        <tr>
+                            <td style="color: var(--text-muted);">{{ attendance.student.student_id }}</td>
+                            <td style="font-weight: 600;">{{ attendance.student.name }}</td>
+                            <td>
+                                {% if attendance.status == 'present' %}
+                                    <span class="badge badge-present">Present</span>
+                                {% elif attendance.status == 'late' %}
+                                    <span class="badge badge-late">Late</span>
+                                {% else %}
+                                    <span class="badge badge-absent">Absent</span>
+                                {% endif %}
+                            </td>
+                            <td style="color: var(--text-muted);">{{ attendance.marked_at|date:"H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+            No records found for this date.
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
-

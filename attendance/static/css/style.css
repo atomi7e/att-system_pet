@@ -1,141 +1,175 @@
-/* --- 1. ПЕРЕМЕННЫЕ (НАСТРОЙКИ ДИЗАЙНА) --- */
-:root {
-    /* Цвета (Apple Blue Style) */
-    --primary-color: #2563EB;       /* Синий основной */
-    --primary-hover: #1D4ED8;       /* Темно-синий (при наведении) */
-    --secondary-color: #64748B;     /* Серый текст */
-    --bg-color: #F8FAFC;            /* Фон страницы (очень светло-серый) */
-    --card-bg: #FFFFFF;             /* Фон карточек */
-    --border-color: #E2E8F0;        /* Цвет рамок */
+/* =========================================
+   1. VARIABLES & RESET
+   ========================================= */
+   :root {
+    /* Цвета */
+    --primary: #2563EB;
+    --primary-hover: #1D4ED8;
+    --bg-body: #F1F5F9;
+    --bg-card: #FFFFFF;
+    --text-main: #1E293B;
+    --text-muted: #64748B;
+    --border: #E2E8F0;
     
     /* Статусы */
-    --success-bg: #ECFDF5;
-    --success-text: #059669;
-    --danger-bg: #FEF2F2;
-    --danger-text: #DC2626;
-    --warning-bg: #FFFBEB;
-    --warning-text: #D97706;
+    --status-present-bg: #DCFCE7;
+    --status-present-text: #166534;
+    --status-absent-bg: #FEE2E2;
+    --status-absent-text: #991B1B;
+    --status-late-bg: #FEF3C7;
+    --status-late-text: #92400E;
 
-    /* Размеры и тени */
-    --radius-lg: 16px;              /* Скругление карточек */
-    --radius-md: 10px;              /* Скругление кнопок */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    
-    /* Шрифт */
-    --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Размеры */
+    --sidebar-width: 260px;
+    --header-height: 64px;
+    --radius: 12px;
 }
 
-/* --- 2. БАЗОВЫЕ СТИЛИ --- */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: var(--font-main);
-    background-color: var(--bg-color);
-    color: #1E293B;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 a { text-decoration: none; color: inherit; transition: 0.2s; }
 ul { list-style: none; }
 
-/* --- 3. LAYOUT (СЕТКА) --- */
-.app-container {
+/* =========================================
+   2. LAYOUT (СЕТКА)
+   ========================================= */
+.app-wrapper {
     display: flex;
     min-height: 100vh;
 }
 
 /* Сайдбар */
 .sidebar {
-    width: 260px;
-    background: var(--card-bg);
-    border-right: 1px solid var(--border-color);
+    width: var(--sidebar-width);
+    background: var(--bg-card);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    position: fixed; /* Фиксируем сайдбар */
-    height: 100%;
+    z-index: 100;
 }
 
-.sidebar-logo {
-    height: 64px;
+.sidebar-header {
+    height: var(--header-height);
     display: flex;
     align-items: center;
-    padding-left: 24px;
+    padding: 0 24px;
     font-size: 20px;
     font-weight: 700;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border);
 }
 
-.logo-accent { color: var(--primary-color); }
+.brand-accent { color: var(--primary); }
 
-.nav-links { padding: 16px; flex: 1; }
+.sidebar-nav { padding: 16px; flex: 1; overflow-y: auto; }
 
-.nav-item {
+.nav-link {
     display: flex;
     align-items: center;
     padding: 12px 16px;
-    border-radius: var(--radius-md);
-    color: var(--secondary-color);
+    color: var(--text-muted);
+    border-radius: var(--radius);
     font-weight: 500;
     margin-bottom: 4px;
 }
 
-.nav-item:hover, .nav-item.active {
+.nav-link:hover, .nav-link.active {
     background-color: #EFF6FF;
-    color: var(--primary-color);
+    color: var(--primary);
 }
 
 .nav-icon { width: 20px; height: 20px; margin-right: 12px; }
 
 .sidebar-footer {
     padding: 16px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar-sm {
+    width: 36px;
+    height: 36px;
+    background: #DBEAFE;
+    color: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
 }
 
 /* Основной контент */
 .main-content {
     flex: 1;
-    margin-left: 260px; /* Отступ под ширину сайдбара */
+    margin-left: var(--sidebar-width); /* Отступ под сайдбар */
     display: flex;
     flex-direction: column;
 }
 
-/* Хедер */
-.header {
-    height: 64px;
-    background: var(--card-bg);
-    border-bottom: 1px solid var(--border-color);
+.top-header {
+    height: var(--header-height);
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 32px;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 90;
 }
 
-.page-title { font-size: 18px; font-weight: 600; }
+.search-bar input {
+    width: 300px;
+    padding: 8px 16px 8px 36px;
+    background: var(--bg-body);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    outline: none;
+}
 
-.content-body {
+.page-body {
     padding: 32px;
-    overflow-y: auto;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
 }
 
-/* --- 4. КОМПОНЕНТЫ --- */
+/* Лейаут для Гостя (Логин) */
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: var(--bg-body);
+}
 
+/* =========================================
+   3. COMPONENTS
+   ========================================= */
 /* Карточки */
 .card {
-    background: var(--card-bg);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-sm);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 24px;
     margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
-
-.card:hover { box-shadow: var(--shadow-md); }
 
 /* Кнопки */
 .btn {
@@ -143,139 +177,131 @@ ul { list-style: none; }
     align-items: center;
     justify-content: center;
     padding: 10px 20px;
-    border-radius: var(--radius-md);
+    border-radius: 8px;
     font-weight: 600;
-    font-size: 14px;
     cursor: pointer;
     border: 1px solid transparent;
+    font-size: 14px;
 }
 
-.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-}
-.btn-primary:hover { background-color: var(--primary-hover); }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-hover); }
 
-.btn-secondary {
-    background-color: white;
-    border-color: var(--border-color);
-    color: var(--secondary-color);
-}
-.btn-secondary:hover { background-color: var(--bg-color); }
+.btn-secondary { background: white; border-color: var(--border); color: var(--text-muted); }
+.btn-secondary:hover { background: var(--bg-body); color: var(--text-main); }
 
 .btn-full { width: 100%; }
 
 /* Формы */
-.form-group { margin-bottom: 20px; }
-
-.form-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    color: #334155;
-}
-
-.form-control {
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; margin-bottom: 6px; font-weight: 600; color: var(--text-main); }
+.form-input {
     width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
     font-size: 14px;
-    background: var(--bg-color);
     outline: none;
 }
-
-.form-control:focus {
-    border-color: var(--primary-color);
-    background: white;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
+.form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
 
 /* Таблицы */
-.table-container {
-    overflow-x: auto;
-}
-
-.table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
+.table-responsive { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; }
 .table th {
     text-align: left;
-    padding: 16px 24px;
-    background-color: #F8FAFC;
-    color: var(--secondary-color);
+    padding: 12px 16px;
+    background: #F8FAFC;
+    color: var(--text-muted);
     font-size: 12px;
     text-transform: uppercase;
-    font-weight: 600;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border);
 }
-
-.table td {
-    padding: 16px 24px;
-    border-bottom: 1px solid #F1F5F9;
-}
-
+.table td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
 .table tr:last-child td { border-bottom: none; }
-.table tr:hover { background-color: #F8FAFC; }
 
-/* Статусы (Badge) */
-.badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
+/* Бейджи */
+.badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.badge-present { background: var(--status-present-bg); color: var(--status-present-text); }
+.badge-absent { background: var(--status-absent-bg); color: var(--status-absent-text); }
+.badge-late { background: var(--status-late-bg); color: var(--status-late-text); }
+
+/* =========================================
+   4. PAGE SPECIFIC
+   ========================================= */
+/* Login */
+.auth-card { width: 100%; max-width: 400px; padding: 40px; text-align: center; }
+.auth-header { margin-bottom: 24px; }
+.auth-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+
+/* Home / Dashboard */
+.welcome-banner {
+    background: linear-gradient(135deg, #2563EB, #4F46E5);
+    color: white;
+    padding: 32px;
+    border-radius: var(--radius);
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
 }
-.badge-success { background: var(--success-bg); color: var(--success-text); }
-.badge-danger { background: var(--danger-bg); color: var(--danger-text); }
-.badge-warning { background: var(--warning-bg); color: var(--warning-text); }
 
-/* --- 5. СПЕЦИФИЧНЫЕ СТРАНИЦЫ --- */
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
 
-/* Логин */
-.auth-wrapper {
+.course-card {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
+    flex-direction: column;
+    height: 100%;
+    transition: transform 0.2s;
 }
-.auth-card { width: 100%; max-width: 400px; padding: 40px; }
+.course-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
 
-/* Профиль студента */
-.profile-header {
+/* Mark Attendance */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    background: white;
+    padding: 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+/* Student Profile */
+.profile-hero {
     display: flex;
     align-items: center;
     gap: 24px;
 }
-.avatar-large {
+.avatar-xl {
     width: 80px;
     height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #2563EB, #4F46E5);
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
     color: white;
     font-size: 32px;
+    font-weight: 700;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
 }
-.stats-grid {
+.stats-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    gap: 24px;
     margin-top: 24px;
 }
-.stat-box {
-    background: white;
-    padding: 20px;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
-    text-align: center;
+.stat-item { text-align: center; background: white; padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); }
+.stat-num { font-size: 32px; font-weight: 700; margin-top: 8px; }
+
+/* Адаптив для мобильных (скрываем сайдбар) */
+@media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main-content { margin-left: 0; }
+    .top-header { padding: 0 16px; }
+    .courses-grid, .stats-row { grid-template-columns: 1fr; }
 }
-.stat-value { font-size: 32px; font-weight: 700; margin-top: 8px; }
-.text-green { color: var(--success-text); }
-.text-red { color: var(--danger-text); }
-.text-yellow { color: var(--warning-text); }

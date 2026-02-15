@@ -1,80 +1,63 @@
 {% extends 'base.html' %}
-
-{% block title %}My Attendance - {{ student.name }}{% endblock %}
+{% block title %}My Attendance{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h2>My attendance</h2>
-    <p class="student-id">{{ student.name }} — {{ student.student_id }} ({{ student.group.code }})</p>
+<div class="header-actions">
+    <div class="header-title">
+        <h2>My Attendance</h2>
+        <p>{{ student.name }} ({{ student.group.code }})</p>
+    </div>
+    <div style="background: #EFF6FF; color: var(--primary); padding: 8px 16px; border-radius: 8px; font-weight: 700;">
+        {{ attendance_percent }}% Overall
+    </div>
 </div>
 
 <div class="stats-grid">
-    <div class="stat-card stat-total">
-        <h3>Attendance level</h3>
-        <p class="stat-number">{{ attendance_percent }}%</p>
-        <p class="stat-detail">present out of {{ total_records }} records</p>
+    <div class="stat-box">
+        <div style="color: var(--text-muted);">Present</div>
+        <div class="stat-num" style="color: var(--status-present-text);">{{ present_count }}</div>
     </div>
-    <div class="stat-card stat-present">
-        <h3>Present</h3>
-        <p class="stat-number">{{ present_count }}</p>
+    <div class="stat-box">
+        <div style="color: var(--text-muted);">Absent</div>
+        <div class="stat-num" style="color: var(--status-absent-text);">{{ absent_count }}</div>
     </div>
-    <div class="stat-card stat-absent">
-        <h3>Absent</h3>
-        <p class="stat-number">{{ absent_count }}</p>
-    </div>
-    <div class="stat-card stat-late">
-        <h3>Late</h3>
-        <p class="stat-number">{{ late_count }}</p>
+    <div class="stat-box">
+        <div style="color: var(--text-muted);">Late</div>
+        <div class="stat-num" style="color: var(--status-late-text);">{{ late_count }}</div>
     </div>
 </div>
 
-{% if stats_by_subject %}
-<div class="attendance-by-subject">
-    <h3>By subject</h3>
-    <p class="text-muted">Separate attendance list for each subject (AP, ICT, etc.)</p>
-    <div class="stats-by-subject-grid">
-        {% for s in stats_by_subject %}
-        <div class="stat-card stat-subject">
-            <h4>{{ s.class.name }} ({{ s.class.code }})</h4>
-            <p class="stat-number">{{ s.percent }}%</p>
-            <p class="stat-detail">Present: {{ s.present }} / Absent: {{ s.absent }} / Late: {{ s.late }} ({{ s.total }} total)</p>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-
-<div class="attendance-history">
-    <h3>Attendance history</h3>
+<div class="card">
+    <h3 style="margin-bottom: 20px; font-size: 18px; font-weight: 600;">History</h3>
     {% if attendances %}
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Subject</th>
-                    <th>Notes</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for attendance in attendances %}
-                    <tr class="status-{{ attendance.status }}">
-                        <td>{{ attendance.date|date:"M d, Y" }}</td>
-                        <td>
-                            <span class="status-badge status-{{ attendance.status }}">
-                                {{ attendance.get_status_display }}
-                            </span>
-                        </td>
-                        <td>{{ attendance.class_enrolled.name }}</td>
-                        <td>{{ attendance.notes|default:"—" }}</td>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                        <th>Notes</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <div class="empty-state">
-            <p>No attendance records yet.</p>
+                </thead>
+                <tbody>
+                    {% for attendance in attendances %}
+                        <tr>
+                            <td style="font-weight: 500;">{{ attendance.date|date:"M d, Y" }}</td>
+                            <td>{{ attendance.class_enrolled.name }}</td>
+                            <td>
+                                <span class="badge badge-{{ attendance.status }}">
+                                    {{ attendance.get_status_display }}
+                                </span>
+                            </td>
+                            <td style="color: var(--text-muted);">{{ attendance.notes|default:"-" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+    {% else %}
+        <div style="text-align: center; padding: 20px; color: var(--text-muted);">No records yet.</div>
     {% endif %}
 </div>
 {% endblock %}

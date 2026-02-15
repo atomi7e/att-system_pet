@@ -1,15 +1,17 @@
 {% extends 'base.html' %}
 {% block title %}Mark Attendance{% endblock %}
-{% block header_title %}Attendance{% endblock %}
+{% block header_title %}Mark Attendance{% endblock %}
 
 {% block content %}
 <div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border);">
         <div>
-            <h2 style="font-size: 20px; font-weight: bold;">{{ class_obj.name }}</h2>
-            <p style="color: var(--secondary-color);">Marking for: {{ attendance_date|date:"F d, Y" }}</p>
+            <h2 style="font-size: 20px; font-weight: 700;">{{ class_obj.name }}</h2>
+            <p style="color: var(--text-muted); margin-top: 4px;">{{ attendance_date|date:"F d, Y" }}</p>
         </div>
-        <div style="display: flex; gap: 10px;">
+        <div>
+            {% if is_teacher %}
+             {% endif %}
             <a href="{% url 'class_students' class_obj.id %}" class="btn btn-secondary">Back</a>
         </div>
     </div>
@@ -17,20 +19,22 @@
     <form method="POST">
         {% csrf_token %}
         
-        <div style="background: #F8FAFC; padding: 15px; border-radius: var(--radius-md); margin-bottom: 20px; display: flex; gap: 15px; align-items: center;">
-            <label for="date" style="font-weight: 600;">Select Date:</label>
-            <input type="date" id="date" name="date" value="{{ attendance_date|date:'Y-m-d' }}" 
-                   class="form-control" style="width: auto;"
-                   onchange="window.location.href='?{% if group_id %}group_id={{ group_id }}&{% endif %}date=' + this.value">
-            
-            <button type="submit" class="btn btn-primary" style="margin-left: auto;">Save Attendance</button>
+        <div class="toolbar">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <label for="date" style="font-weight: 600;">Date:</label>
+                <input type="date" id="date" name="date" value="{{ attendance_date|date:'Y-m-d' }}" 
+                       class="form-input" style="width: auto;"
+                       onchange="window.location.href='?date=' + this.value">
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
         </div>
 
-        <div class="table-container">
+        <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Student</th>
+                        <th>#</th>
+                        <th>Student Name</th>
                         <th>ID</th>
                         <th>Status</th>
                     </tr>
@@ -38,15 +42,14 @@
                 <tbody>
                     {% for student in students %}
                     <tr>
-                        <td>
-                            <div style="font-weight: 600;">{{ student.name }}</div>
-                        </td>
+                        <td style="color: var(--text-muted);">{{ forloop.counter }}</td>
+                        <td style="font-weight: 600;">{{ student.name }}</td>
                         <td>{{ student.student_id }}</td>
                         <td>
-                            <select name="status_{{ student.id }}" class="form-control" style="width: 150px;">
-                                <option value="present" {% if student.current_status == 'present' %}selected{% endif %}>Present 🟢</option>
-                                <option value="absent" {% if student.current_status != 'present' and student.current_status != 'late' %}selected{% endif %}>Absent 🔴</option>
-                                <option value="late" {% if student.current_status == 'late' %}selected{% endif %}>Late 🟡</option>
+                            <select name="status_{{ student.id }}" class="form-input" style="width: 140px;">
+                                <option value="present" {% if student.current_status == 'present' %}selected{% endif %}>Present</option>
+                                <option value="absent" {% if student.current_status != 'present' and student.current_status != 'late' %}selected{% endif %}>Absent</option>
+                                <option value="late" {% if student.current_status == 'late' %}selected{% endif %}>Late</option>
                             </select>
                         </td>
                     </tr>
